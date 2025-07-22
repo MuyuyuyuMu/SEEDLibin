@@ -6,13 +6,11 @@ public class TanHuang : MonoBehaviour
 {
     // Start is called before the first frame update
     private float rotate = 0;
-    private  float lastRotation = 0;
     bool canRotate = true;
-    bool reback = false;
     public GameObject player;
-    public float time = 0f;
-    public Vector3 startRotate;
     private Rigidbody2D rb;
+    private Vector3 rotateStart;
+    private float time;
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
@@ -30,32 +28,21 @@ public class TanHuang : MonoBehaviour
                 CopyManager.Instance.isFly = true;
             }
             canRotate = false;
+            rotateStart = gameObject.transform.eulerAngles;
         }
-
-        if (rotate < 30)
+        if (!canRotate)
         {
-            canRotate = true;
-        }
-
-        if (rotate > 80 && !reback)
-        {
-            reback = true;
-            startRotate = gameObject.transform.eulerAngles;
-            gameObject.transform.eulerAngles = startRotate;
-        }
-
-        if (reback)
-        {
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = 0;
-            time += Time.deltaTime * 10;
-            gameObject.transform.eulerAngles = Vector3.Lerp(startRotate, new Vector3(0,0,0), time/3f);
-            if (time >= 3f)
+            time+=Time.deltaTime;
+            gameObject.transform.eulerAngles = Vector3.Lerp(rotateStart, new Vector3(0,0,180f), time/0.5f);
+            if (time >= 0.5f)
             {
-                reback = false;
                 time = 0;
+                canRotate = true;
+                gameObject.transform.eulerAngles = new Vector3(0,0,0);
+                rotate = 0;
+                rb.angularVelocity = 0;
+                rb.velocity = Vector2.zero;;
             }
-            Debug.Log(time);
         }
     }
 }
